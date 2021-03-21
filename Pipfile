@@ -15,6 +15,13 @@ xarray = "==0.16.0"
 tensorflow = "*"
 theano = "*"
 pymc3 = "==3.9.3"
+tqdm = "*"
+joblib = "*"
 
 [requires]
 python_version = "3.7"
+
+[scripts]
+test     = "python -m unittest discover -v"
+make_rst = "sphinx-apidoc -f -o ./docs ."
+docs     = "sphinx-build -b singlehtml ./docs ./docs/_build"
