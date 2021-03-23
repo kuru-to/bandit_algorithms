@@ -30,18 +30,23 @@ Features
 
 Commands
 --------
-# Unittest
+
+Unittest
+===
 ```
 pipenv run test
 ```
 
-# Documentation
-## Setup or index.rst に変更を加えた
+Documentation
+===
+Setup or index.rst に変更を加えた
+---
 ```
 pipenv run make_rst
 ```
 
-## Document update
+Document update
+---
 ```
 pipenv run docs
 ```
