@@ -17,7 +17,7 @@ class ContextualBanditAlgorithm(object):
     def get_iteration_number(self):
         return self.iter_num
 
-    def set_iteration_number(self, t):
+    def set_iteration_number(self, t:int):
         """Setter of iteration 回数"""
         # t が0以下の値の場合、エラーを返す
         assert t > 0, "iteration number must be positive. t = {0}".format(t)

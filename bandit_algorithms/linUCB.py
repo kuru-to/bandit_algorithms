@@ -15,7 +15,7 @@ class LinUCBAgent(ContextualBanditAlgorithm):
         A_inv(np.array) : UCBスコアを計算するためのパラメータ. n_features*n_features
         b(np.array)     : UCBスコアを計算するためのパラメータ. n_features*1
     """
-    def __init__(self, n_features, n_arms,
+    def __init__(self, n_features:int, n_arms:int,
                  sigma=1, alpha=0.01, sigma_0=0.1):
         super().__init__(n_features)
 
