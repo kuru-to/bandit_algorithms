@@ -1,4 +1,5 @@
 """Logistic Thompson Sampling agent class"""
+from typing import List
 
 import numpy as np
 
@@ -6,11 +7,11 @@ from bandit_algorithms.contextual_bandit import ContextualBanditAlgorithm
 
 class LogisticTSAgent(ContextualBanditAlgorithm):
     """
-    Args :
-        sigma_0(float)             : theta の事前分布の分散
-        num_theta_max_iter(int)    : theta の探索を行う反復回数の上限
-        epsilon(float)             : theta の探索を行う際の収束許容誤差
-        interval_update_theta(int) : thetaの更新を行う間隔. この回数だけ反復したら theta, hessian を更新する
+    Args:
+        sigma_0               : theta の事前分布の分散
+        num_theta_max_iter    : theta の探索を行う反復回数の上限
+        epsilon               : theta の探索を行う際の収束許容誤差
+        interval_update_theta : thetaの更新を行う間隔. この回数だけ反復したら theta, hessian を更新する
 
     Attributes:
         theta(np.array)                     : 各特徴量に対するパラメータ. n_features*1
@@ -18,8 +19,12 @@ class LogisticTSAgent(ContextualBanditAlgorithm):
         lst_reward_history(list[int])       : 引いた腕の報酬リスト. 0 or 1
         H_inv(np.array)                     : 乱数生成に必要なヘシアンの逆行列
     """
-    def __init__(self, n_features,
-                 sigma_0=0.1, num_theta_max_iter=1000, epsilon=0.01, interval_update_theta=100):
+    def __init__(self, n_features:int,
+                 sigma_0:float=0.1, 
+                 num_theta_max_iter:int=1000, 
+                 epsilon:float=0.01, 
+                 interval_update_theta:int=100
+                ):
         super().__init__(n_features)
 
         self.sigma_0 = sigma_0
@@ -32,7 +37,7 @@ class LogisticTSAgent(ContextualBanditAlgorithm):
         self.lst_reward_history = []
         self.H_inv = self.calc_hessian_inv(self.theta)
     
-    def logistic(self, x):
+    def logistic(self, x:np.ndarray) -> np.ndarray:
         """logistic 関数
         
         xが小さすぎるとオーバーフローを起こすため、-500より小さければ0とする
@@ -42,8 +47,8 @@ class LogisticTSAgent(ContextualBanditAlgorithm):
         else:
             return 1 / (1+np.exp(-x))
         
-    def calc_gradient(self, theta):
-        """負の対数事後確率の勾配 g(θ) の計算"""
+    def calc_gradient(self, theta:np.ndarray):
+        """負の対数事後確率の勾配 g(theta) の計算"""
         g = (theta / self.sigma_0**2)
 
         for idx, context in enumerate(self.lst_context_history):
@@ -51,8 +56,8 @@ class LogisticTSAgent(ContextualBanditAlgorithm):
         
         return g
     
-    def calc_hessian_inv(self, theta):
-        """負の対数事後確率のヘシアン H(θ) の逆行列の計算"""
+    def calc_hessian_inv(self, theta:np.ndarray):
+        """負の対数事後確率のヘシアン H(theta) の逆行列の計算"""
         H = (np.identity(self.n_features)/self.sigma_0 ** 2)
 
         for context in self.lst_context_history:
@@ -61,11 +66,11 @@ class LogisticTSAgent(ContextualBanditAlgorithm):
 
         return np.linalg.inv(H)
         
-    def set_theta(self, theta):
+    def set_theta(self, theta:np.ndarray):
         """theta の係数格納"""
         self.theta = theta
     
-    def set_H_inv(self, H_inv):
+    def set_H_inv(self, H_inv:np.ndarray):
         """乱数生成に必要なヘシアンの逆行列格納"""
         self.H_inv = H_inv
         
@@ -73,11 +78,11 @@ class LogisticTSAgent(ContextualBanditAlgorithm):
         """多変量正規分布からパラメータをサンプリング"""
         return np.random.multivariate_normal(self.theta, self.H_inv)
     
-    def get_arm(self, context):
+    def get_arm(self, context:List[List[float]]):
         """腕を選択
         
         Args:
-            context(np.array) : 特徴量. n_features*n_arms
+            context : 特徴量. n_features*n_arms
         """
         np_context = np.array(context)
         theta_tild = self.get_theta_by_normalDistribution()
@@ -85,11 +90,15 @@ class LogisticTSAgent(ContextualBanditAlgorithm):
         score = np_context.dot(theta_tild)
         return np.argmax(score)
         
-    def add_reward(self, reward):
-        """得られた報酬のリストに追加"""
+    def add_reward(self, reward:int):
+        """得られた報酬のリストに追加
+        
+        Args:
+            reward : 報酬. 0 or 1
+        """
         self.lst_reward_history.append(reward)
         
-    def add_context(self, context):
+    def add_context(self, context:List[List[float]]):
         """選択した腕のcontextをリストに追加"""
         self.lst_context_history.append(np.array(context))
     
@@ -118,7 +127,7 @@ class LogisticTSAgent(ContextualBanditAlgorithm):
         self.set_theta(theta_hat)
         self.set_H_inv(self.calc_hessian_inv(theta_hat))
     
-    def sample(self, selected_context, reward):
+    def sample(self, selected_context:List[float], reward:int):
         """選択した腕の文脈とその報酬を得て、更新を行う"""
         self.set_iteration_number(self.get_iteration_number()+1)
         self.add_reward(reward)

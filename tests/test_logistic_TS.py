@@ -1,20 +1,20 @@
 #!/usr/bin/env python
-"""Tests for `LogisticTSAgent` package."""
+"""Tests for `logistic_TS` module."""
 
 import unittest
 
 import numpy as np
 
-from bandit_algorithms.logistic_TS import LogisticTSAgent
+from bandit_algorithms import logistic_TS
 
 class TestLogisticTSAgent(unittest.TestCase):
-    """Tests for `bandit_algorithms` package."""
+    """Tests for `LogisticTSAgent` package."""
 
     def setUp(self):
         """Set up test fixtures, if any."""
         self.n_features = 2
         self.interval_update_theta = 100
-        self.model = LogisticTSAgent(self.n_features, interval_update_theta=self.interval_update_theta)
+        self.model = logistic_TS.LogisticTSAgent(self.n_features, interval_update_theta=self.interval_update_theta)
         np.random.seed(0)
 
     def tearDown(self):
@@ -28,7 +28,7 @@ class TestLogisticTSAgent(unittest.TestCase):
         epsilon=0.1
         interval_update_theta=10
         
-        model = LogisticTSAgent(n_features, sigma_0, num_theta_max_iter, epsilon, interval_update_theta)
+        model = logistic_TS.LogisticTSAgent(n_features, sigma_0, num_theta_max_iter, epsilon, interval_update_theta)
         
         # your settings
         self.assertEqual(model.n_features, n_features)

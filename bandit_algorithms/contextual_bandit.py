@@ -3,7 +3,7 @@ import numpy as np
 
 class ContextualBanditAlgorithm(object):
     """
-    Args :
+    Args:
         n_features : 特徴量の次元数
 
     Attributes:
@@ -14,13 +14,16 @@ class ContextualBanditAlgorithm(object):
 
         self.iter_num = 0
 
-    def get_iteration_number(self):
+    def get_iteration_number(self) -> int:
+        """Getter of iteration 回数"""
         return self.iter_num
 
-    def set_iteration_number(self, t:int):
+    def set_iteration_number(self, t: int) -> None:
         """Setter of iteration 回数"""
-        # t が0以下の値の場合、エラーを返す
+        # t が自然数でない場合、エラーを返す
         assert t > 0, "iteration number must be positive. t = {0}".format(t)
+        # python の型定義は正確ではないため、しっかりエラーを吐くように設定しないといけない
+        assert isinstance(t, int), "iteration number must be int. t = {0}".format(t)
         self.iter_num = t
 
 if __name__ == '__main__':

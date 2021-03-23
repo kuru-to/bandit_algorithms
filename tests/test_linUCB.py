@@ -1,14 +1,14 @@
 #!/usr/bin/env python
-"""Tests for `LinUCBAgent` package."""
+"""Tests for `linUCB` module."""
 
 import unittest
 
 import numpy as np
 
-from bandit_algorithms.linUCB import LinUCBAgent
+from bandit_algorithms import linUCB
 
 class TestLinUCBAgent(unittest.TestCase):
-    """Tests for `bandit_algorithms` package."""
+    """Tests for `LinUCBAgent` package."""
 
     def setUp(self):
         """Set up test fixtures, if any."""
@@ -16,7 +16,7 @@ class TestLinUCBAgent(unittest.TestCase):
         self.n_features = 2
         self.sigma = 0.1
         self.sigma_0 = 1
-        self.model = LinUCBAgent(n_arms=self.n_arms, n_features=self.n_features, 
+        self.model = linUCB.LinUCBAgent(n_arms=self.n_arms, n_features=self.n_features, 
                                  sigma=self.sigma, sigma_0=self.sigma_0)
 
         np.random.seed(0)
@@ -47,7 +47,7 @@ class TestLinUCBAgent(unittest.TestCase):
         else:
             self.assertTrue(False, "LinUCB.theta has column!")
 
-    def set_iter_num(self, iter_num:int):
+    def set_iter_num(self, iter_num:int) -> linUCB.LinUCBAgent:
         """反復回数をセットしたモデルを返す"""
         model = self.model
         model.set_iteration_number(iter_num)

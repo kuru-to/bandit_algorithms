@@ -16,8 +16,9 @@ class TestBandit_algorithms(unittest.TestCase):
     def tearDown(self):
         """Tear down test fixtures, if any."""
 
-    def test_000_something(self):
-        """Test something."""
+    def test_set_iteration_number(self):
+        """Test set_iteration_number."""
+        
 
     # def test_command_line_interface(self):
     #     """Test the CLI."""

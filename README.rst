@@ -32,28 +32,25 @@ Commands
 --------
 
 Unittest
-===
+========
+.. code-block:: console
 
-```
-pipenv run test
-```
+    $ pipenv run test
 
 Documentation
-===
+========
 
 Setup or index.rst に変更を加えた
----
+--------
+.. code-block:: console
 
-```
-pipenv run make_rst
-```
+    $ pipenv run make_rst
 
 Document update
----
+--------
+.. code-block:: console
 
-```
-pipenv run docs
-```
+    $ pipenv run docs
 
 
 Credits

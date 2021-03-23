@@ -1,22 +1,23 @@
 """Linear Upper Confidence Bound policy agent class"""
+from typing import List
 
 import numpy as np
 from bandit_algorithms.contextual_bandit import ContextualBanditAlgorithm
 
 class LinUCBAgent(ContextualBanditAlgorithm):
     """
-    Args :
-        n_arms(int)     : 引ける腕の数
-        sigma(float)    : 誤差項の分散
-        alpha(float)    : UCBスコアにかかる係数
-        sigma_0(float)  : theta の事前分布の分散
+    Args:
+        n_arms  : 引ける腕の数
+        sigma   : 誤差項の分散
+        alpha   : UCBスコアにかかる係数
+        sigma_0 : theta の事前分布の分散
 
     Attributes:
         A_inv(np.array) : UCBスコアを計算するためのパラメータ. n_features*n_features
         b(np.array)     : UCBスコアを計算するためのパラメータ. n_features*1
     """
     def __init__(self, n_features:int, n_arms:int,
-                 sigma=1, alpha=0.01, sigma_0=0.1):
+                 sigma:int=1, alpha:float=0.01, sigma_0:float=0.1):
         super().__init__(n_features)
 
         self.n_arms = n_arms
@@ -28,7 +29,7 @@ class LinUCBAgent(ContextualBanditAlgorithm):
         self.A_inv  = (self.sigma_0**2 / sigma**2) * np.identity(n_features)
         self.b      = np.zeros(n_features)
         
-    def get_features(self, context):
+    def get_features(self, context:List[float]) -> np.array:
         """入力されるcontext がどのような型でも計算できるように、numpy型に変換して返す
         
         Args:
@@ -39,7 +40,7 @@ class LinUCBAgent(ContextualBanditAlgorithm):
         """
         return np.array(context)
 
-    def calc_posterior_parameters(self):
+    def calc_posterior_parameters(self) -> (np.array, np.array):
         """各特徴量に対する係数の事後分布のパラメータを算出
 
         Returns:
@@ -48,7 +49,7 @@ class LinUCBAgent(ContextualBanditAlgorithm):
         """
         return self.A_inv.dot(self.b), self.A_inv
 
-    def predict_normalDistribution(self, context):
+    def predict_normalDistribution(self, context:List[float]):
         """文脈（特徴量）に対する正規分布の平均と分散を算出
         
         Args:
@@ -62,27 +63,31 @@ class LinUCBAgent(ContextualBanditAlgorithm):
         post_mean, post_var = self.calc_posterior_parameters()
         return features.dot(post_mean), features.dot(post_var).dot(features.T)
         
-    def calc_UCBScore(self, context):
+    def calc_UCBScore(self, context:List[float]) -> np.array:
         """UCBスコアの計算
         
         Args:
-            context(list[float]) : 入力する文脈. 属性情報とかそれまでの選択とか. n_arms*n_features
+            context : 入力する文脈. 属性情報とかそれまでの選択とか. n_arms*n_features
         """
         alpha_t = self.alpha * np.sqrt(np.log(self.get_iteration_number()))
         pred_mean, pred_var = self.predict_normalDistribution(context)
         ucb = pred_mean.T + alpha_t * np.sqrt(np.diag(pred_var))
         return ucb
     
-    def get_arm(self, context):
-        """腕を選択"""
+    def get_arm(self, context:List[float]) -> int:
+        """腕を選択
+        
+        Returns:
+            int : 期待値最大となる腕の index
+        """
         return np.argmax(self.calc_UCBScore(context))
     
-    def update(self, selected_context, reward):
+    def update(self, selected_context:List[float], reward:float):
         """観測した報酬からパラメータ更新
         
         Args:
-            selected_context(list[float]) : 選択した腕の特徴量. n_features*1
-            reward(float)     : 得られた報酬. 報酬は正規分布に従うとしているため、binary でなくともよい
+            selected_context : 選択した腕の特徴量. n_features*1
+            reward           : 得られた報酬. 報酬は正規分布に従うとしているため、binary でなくともよい
         """
         # 視認性向上のため、context 情報を変数に格納しておく
         a_it = self.get_features(selected_context)
