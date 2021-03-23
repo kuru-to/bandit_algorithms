@@ -47,7 +47,7 @@ class TestLinUCBAgent(unittest.TestCase):
         else:
             self.assertTrue(False, "LinUCB.theta has column!")
 
-    def set_iter_num(self, iter_num):
+    def set_iter_num(self, iter_num:int):
         """反復回数をセットしたモデルを返す"""
         model = self.model
         model.set_iteration_number(iter_num)
